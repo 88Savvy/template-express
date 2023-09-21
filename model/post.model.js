@@ -1,42 +1,22 @@
 import { Schema, model } from "mongoose";
 
-const userSchema = new Schema(
+const postSchema = new Schema(
   {
-    username: {
+    title: {
       type: String,
       required: true,
       trim: true,
-      minlenght: 2,
-      maxlength: 30,
     },
-
-    name: {
+    author: {
+      type: Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
+    content: {
       type: String,
       required: true,
-      trim: true,
-      minlength: 3,
     },
-
-    email: {
-      type: String,
-      required: true,
-      unique: true,
-      trim: true,
-      match: /[^@ \t\r\n]+@[^@ \t\r\n]+\.[^@ \t\r\n]+/, // match = regex
-    },
-
-    profilePicture: {
-      type: String,
-      default: "https://cdn.wallpapersafari.com/92/63/wUq2AY.jpg",
-    },
-
-    bio: {
-      type: String,
-      trim: true,
-      default: "",
-    },
-    posts: [{ type: Schema.Types.ObjectId, ref: "Post" }],
-    followedCategories: [
+    category: [
       {
         type: String,
         enum: [
@@ -68,12 +48,20 @@ const userSchema = new Schema(
           "Fashion & Beauty",
         ],
       },
+    ], //
+    likes: [{ type: Schema.Types.ObjectId, ref: "User" }], // An array to store user IDs who liked the content
+    views: {
+      type: Number,
+      default: 0,
+    },
+    comments: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "Comment",
+      },
     ],
-    following: [{ type: Schema.Types.ObjectId, ref: "User" }],
-    passwordHash: { type: String, required: true },
   },
-
   { timestamps: true }
 );
 
-export default model("User", userSchema);
+export default model("Post", postSchema);
